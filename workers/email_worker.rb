@@ -1,5 +1,7 @@
 require 'mail'
 
+p params
+
 # Configures smtp settings to send email.
 def init_mail(params)
   username = params['username']
@@ -50,7 +52,8 @@ unless to.is_a?(Array)
 end
 
 to.each do |email|
-  message_details = send_mail(email, params['from'], params['subject'], params['body'])
+  message_details = send_mail(email, params['email']['from'], params['subject'], params['body'])
+  puts "message_details: " + message_details.inspect
 end
 
 puts "Worker finished"

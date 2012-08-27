@@ -21,6 +21,19 @@ post '/lead' do
 
   settings.ironmq.messages.post(msg.to_json, :queue_name=>'lead')
 
+  # Now queue up email worker
+  task = settings.ironworker.tasks.create("email_worker",
+                         SingletonConfig.config.merge(
+                             to: lead.email,
+                             subject: "Thanks for the Lead!",
+                             body: "Thanks #{lead.name}!<br/>
+<br/>
+Company: #{lead.company}<br/>
+Email: #{lead.email}<br/>
+"
+
+                         ))
+
   flash[:notice] = "Submitted, thank you!"
 
   redirect "/"

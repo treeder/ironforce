@@ -19,6 +19,7 @@ if ENV['CONFIG_CACHE_KEY']
   config_from_cache = open(ENV['CONFIG_CACHE_KEY']).read
   config_from_cache = JSON.parse(config_from_cache)
   config_from_cache = YAML.load(config_from_cache['value'])
+  puts "config from cache"
   p config_from_cache
 
   @config.merge!(config_from_cache)
@@ -31,7 +32,7 @@ end
 ENV['IRON_TOKEN'] ||= @config[:iron][:token]
 ENV['IRON_PROJECT_ID'] ||= @config[:iron][:project_id]
 
-
+UberConfig.symbolize_keys!(@config)
 p @config
 
 module SingletonConfig

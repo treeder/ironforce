@@ -17,10 +17,10 @@ set :public_folder, File.expand_path(File.dirname(__FILE__) + '/assets')
 $: << '.'
 require 'config'
 
-ironmq = IronMQ::Client.new(SingletonConfig.config['iron'])
+ironmq = IronMQ::Client.new(SingletonConfig.config[:iron])
 #ironmq.logger.level = Logger::DEBUG
-ironcache = IronCache::Client.new(SingletonConfig.config['iron'])
-ironworker = IronWorkerNG::Client.new(SingletonConfig.config['iron'])
+ironcache = IronCache::Client.new(SingletonConfig.config[:iron])
+ironworker = IronWorkerNG::Client.new(SingletonConfig.config[:iron])
 set :ironmq, ironmq
 set :ironcache, ironcache
 set :ironworker, ironworker
