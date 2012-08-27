@@ -9,16 +9,15 @@ class ConfigPusher
     @config = UberConfig.load
     puts @config.to_yaml
 
-    c = IronCache::Client.new
+    c = IronCache::Client.new(@config['iron'])
     cache = c.cache("configs")
     item = cache.put(@config['app_name'], @config.to_yaml)
     p item
 
     url = cache.url(@config['app_name'])
-    puts "url: #{url}"
     url_with_token = url + "?oauth=#{c.token}"
-    puts url_with_token
-
+    #puts url_with_token
+    puts `heroku config:add CONFIG_CACHE_KEY=#{url_with_token}`
 
   end
 end

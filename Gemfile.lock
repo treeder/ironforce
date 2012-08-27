@@ -7,7 +7,8 @@ GEM
       rest (>= 2.0.2)
     iron_mq (2.1.2)
       iron_core (>= 0.4.2)
-    iron_worker_ng (0.10.1)
+    iron_worker_ng (0.10.2)
+      bundler (>= 1.0.0)
       iron_core (>= 0.4.2)
       zip
     jsonable (0.0.3)
