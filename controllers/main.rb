@@ -19,7 +19,7 @@ post '/lead' do
   }
   puts "Putting message on queue: " + msg.inspect
 
-  settings.ironmq.messages.post(msg.to_json, :queue_name=>'lead')
+  settings.ironmq.queue('lead').post(msg.to_json)
 
   # Now queue up email worker
   task = settings.ironworker.tasks.create("email_worker",
