@@ -1,6 +1,5 @@
 class Contact
-  include Jsonable
-  include Idable
+  include Ocm::Ormable
 
   attr_accessor :email,
                 :name,

@@ -1,0 +1,12 @@
+runtime 'ruby'
+
+# gem dependencies
+gem 'iron_mq'
+gem 'iron_cache'
+gem 'iron_worker_ng'
+gem 'ocm'
+
+dir '../models'
+
+# file to execute
+exec 'lead_worker.rb'

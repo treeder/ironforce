@@ -1,57 +1,49 @@
-require 'iron_worker'
+# lead_worker does all the work after someone submits a form.
+# First, it will post a message to a queue so Boomi can take it off and post to Salesforce.
+# Second, it will send out an email to the user.
 
-class LeadWorker < IronWorker::Base
-  attr_accessor :iron_project_id
-  attr_accessor :iron_token
+require 'iron_worker_ng'
+require 'iron_mq'
+require 'iron_cache'
+require 'ocm'
+require_relative 'models/contact'
 
-  attr_accessor :mongodb_uri
-  attr_accessor :mongodb_database
+puts "params: #{params.inspect}"
 
-  merge_gem 'iron_mq'
-  merge_gem 'mongoid'
+config = params[:config]
 
-  merge '../models/contact'
+lead = Contact.new
+lead.name = params[:name]
+lead.email = params[:email]
+lead.company = params[:company]
 
-  def run
-    mq = IronMQ::Client.new('token' => @iron_token, 'project_id' => @iron_project_id)
-    mq.queue_name = 'lead_created'
+mq = IronMQ::Client.new(token: config[:iron][:token], project_id: config[:iron][:project_id])
+ic = IronCache::Client.new(token: config[:iron][:token], project_id: config[:iron][:project_id])
+iw = IronWorkerNG::Client.new(token: config[:iron][:token], project_id: config[:iron][:project_id])
 
-    Mongoid.configure do |config|
-      config.master = Mongo::Connection.from_uri(@mongodb_uri + '/' + @mongodb_database)[@mongodb_database]
-    end
+# Save to db (IronCache)
+ocm = Ocm::Orm.new(ic.cache("ironforce"))
+ocm.save(lead)
+ocm.append_to_list("lead_list", lead)
+puts "Saved lead: " + lead.inspect
 
-    while true
-      msg = mq.messages.get
-      if msg.nil?
-        puts 'No more messages'
-        break
-      end
+# Add to queue (IronMQ)
+msg = {
+    id: lead.id.to_s,
+    name: lead.name,
+    email: lead.email,
+    company: lead.company
+}
+puts "Putting message on queue: " + msg.inspect
+mq.queue('lead').post(msg.to_json)
 
-      p msg
-      p msg.body
-      if msg.body.nil? || msg.body == ""
-        puts "Body is null, deleting."
-        msg.delete
-        next
-      end
-
-      body = JSON.parse(msg.body)
-
-      puts "got salesforce_id #{body['salesforce_id']} for contact id #{body['id']}"
-
-      begin
-        c = Contact.find(BSON::ObjectId(body['id']))
-      rescue => ex
-        puts "Couldn't find contact! #{ex.message}"
-        p msg.delete
-        next
-      end
-      c.salesforce_id = body['salesforce_id']
-      c.save!
-
-      puts "set salesforce_id for contact id #{c.id} email #{c.email}"
-
-      p msg.delete
-    end
-  end
-end
+puts "Queuing up email"
+# now queue up email worker
+iw.tasks.create('email_worker', config['email'].merge(
+    to: lead.email,
+    subject: "Thanks for the Lead!",
+    body: "Thanks #{lead.name}!<br/>
+<br/>
+Company: #{lead.company}<br/>
+Email: #{lead.email}<br/>
+"))

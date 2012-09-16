@@ -1,3 +1,6 @@
+# This worker requires the following parameters:
+# username, password, domain, host, port, from, to, subject, body
+
 require 'mail'
 
 p params
@@ -44,7 +47,7 @@ end
 # Sample worker that sends an email.
 puts "Worker started"
 
-init_mail(params['email'])
+init_mail(params)
 
 to = params['to']
 unless to.is_a?(Array)
@@ -52,7 +55,7 @@ unless to.is_a?(Array)
 end
 
 to.each do |email|
-  message_details = send_mail(email, params['email']['from'], params['subject'], params['body'])
+  message_details = send_mail(email, params['from'], params['subject'], params['body'])
   puts "message_details: " + message_details.inspect
 end
 

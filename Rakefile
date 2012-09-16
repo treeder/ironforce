@@ -11,11 +11,21 @@ task :push_config do
 end
 
 namespace :workers do
-  task :upload_email_worker do
+  task :upload_email do
     client = IronWorkerNG::Client.new(@config['iron'])
     # Upload the code
-    code = IronWorkerNG::Code::Base.new(:workerfile => 'workers/email_worker.worker')
+    code = IronWorkerNG::Code::Base.new('workers/email_worker')
     client.codes.create(code)
+  end
+  task :upload_lead do
+    client = IronWorkerNG::Client.new(@config['iron'])
+    # Upload the code
+    code = IronWorkerNG::Code::Base.new('workers/lead_worker')
+    client.codes.create(code)
+  end
+  task :upload do
+    Rake::Task["workers:upload_email"].invoke
+    Rake::Task["workers:upload_lead"].invoke
   end
 
 end

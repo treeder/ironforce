@@ -12,7 +12,7 @@ to get it or to sign up.
 To run in development:
 
 - Copy the `config_sample.yml` file to `config.yml` and fill in the appropriate values.
-- Upload the email worker with `rake workers:upload_email_worker`
+- Upload the workers with `rake workers:upload`
 - Run `rackup` at the command line
 
 To run on heroku:

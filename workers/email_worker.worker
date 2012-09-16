@@ -1,8 +1,7 @@
 runtime "ruby"
-exec "email_worker.rb"
+
 gem "mail"
 gem "rest"
 gem "iron_cache"
 
-# temporary
-name 'email_worker'
+exec "email_worker.rb"
