@@ -29,31 +29,4 @@ set :ocm, ocm
 
 require_relative 'models/contact'
 
-post '/lead' do
-  puts 'in lead'
-
-  # Now queue up email worker
-  begin
-    task = settings.ironworker.tasks.create("lead_worker", {config: SingletonConfig.config}.merge(params))
-    p task
-  rescue => ex
-    p ex
-    p ex.code
-    p ex.backtrace
-    raise ex
-  end
-
-  flash[:notice] = "Submitted, thank you!"
-
-  redirect "/"
-end
-
-get '/leads' do
-  @contacts = settings.orm.get_list("lead_list")
-  erb :contacts
-end
-
-get '*' do
-  erb :index
-end
-
+require_relative 'lead_app'
