@@ -29,4 +29,4 @@ set :ocm, ocm
 
 require_relative 'models/contact'
 
-require_relative 'lead_app'
+require_relative 'app_leads'

@@ -18,6 +18,8 @@ lead.email = params[:email]
 lead.company = params[:company]
 
 mq = IronMQ::Client.new(token: config[:iron][:token], project_id: config[:iron][:project_id])
+# boomi_mq is the for the shared queues for the Boomi integration
+boomi_mq = IronMQ::Client.new(token: config[:iron][:token], project_id: config[:iron][:boomi_project_id])
 ic = IronCache::Client.new(token: config[:iron][:token], project_id: config[:iron][:project_id])
 iw = IronWorkerNG::Client.new(token: config[:iron][:token], project_id: config[:iron][:project_id])
 
@@ -35,7 +37,7 @@ msg = {
     company: lead.company
 }
 puts "Putting message on queue: " + msg.inspect
-mq.queue('lead').post(msg.to_json)
+boomi_mq.queue('lead').post(msg.to_json)
 
 puts "Queuing up email"
 # now queue up email worker

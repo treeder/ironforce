@@ -4,10 +4,12 @@ require 'iron_worker_ng'
 @config = UberConfig.load
 p @config
 
-task :push_config do
-  require_relative 'config_pusher'
-  cp = ConfigPusher.new
-  cp.push
+namespace :config do
+  task :push do
+    require_relative 'config_pusher'
+    cp = ConfigPusher.new
+    cp.push
+  end
 end
 
 namespace :workers do

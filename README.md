@@ -17,6 +17,6 @@ To run in development:
 
 To run on heroku:
 
-- Run `rake push_config` to store config
+- Run `rake config:push` to store config file in IronCache and set config variable.
 - Then `git push heroku master`
 
