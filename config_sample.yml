@@ -4,6 +4,7 @@ app_name: "irondream.herokuapp.com"
 iron:
     token: MY IRON.IO TOKEN
     project_id: MY IRON.IO PROJECT ID
+    boomi_project_id: MY SHARED IRON.IO PROJECT ID
 
 email:
     host: smtp.sendgrid.net
