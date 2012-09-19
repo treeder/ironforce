@@ -6,6 +6,7 @@ gem 'iron_cache'
 gem 'iron_worker_ng'
 gem 'ocm'
 
+# local dependencies
 dir '../models'
 
 # file to execute
