@@ -18,6 +18,12 @@ boomi_mq = IronMQ::Client.new(token: config[:iron][:token], project_id: config[:
 ic = IronCache::Client.new(token: config[:iron][:token], project_id: config[:iron][:project_id])
 iw = IronWorkerNG::Client.new(token: config[:iron][:token], project_id: config[:iron][:project_id])
 
+# Create Contact object
+lead = Contact.new
+lead.name = params[:name]
+lead.email = params[:email]
+lead.company = params[:company]
+
 # Save to db (IronCache)
 ocm = Ocm::Orm.new(ic.cache("ironforce"))
 ocm.save(lead)
