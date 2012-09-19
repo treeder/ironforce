@@ -1,5 +1,5 @@
 # app_name will be used for cache naming and other things
-app_name: "irondream.herokuapp.com"
+app_name: "ironforce.herokuapp.com"
 
 iron:
     token: MY IRON.IO TOKEN
