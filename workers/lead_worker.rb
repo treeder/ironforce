@@ -10,15 +10,10 @@ require_relative 'models/contact'
 
 puts "params: #{params.inspect}"
 
+# Setup our client libs
 config = params[:config]
-
-lead = Contact.new
-lead.name = params[:name]
-lead.email = params[:email]
-lead.company = params[:company]
-
 mq = IronMQ::Client.new(token: config[:iron][:token], project_id: config[:iron][:project_id])
-# boomi_mq is the for the shared queues for the Boomi integration
+# boomi_mq is using the shared project for the Boomi integration
 boomi_mq = IronMQ::Client.new(token: config[:iron][:token], project_id: config[:iron][:boomi_project_id])
 ic = IronCache::Client.new(token: config[:iron][:token], project_id: config[:iron][:project_id])
 iw = IronWorkerNG::Client.new(token: config[:iron][:token], project_id: config[:iron][:project_id])
@@ -39,8 +34,8 @@ msg = {
 puts "Putting message on queue: " + msg.inspect
 boomi_mq.queue('lead').post(msg.to_json)
 
+# Queue up email worker
 puts "Queuing up email"
-# now queue up email worker
 iw.tasks.create('email_worker', config['email'].merge(
     to: lead.email,
     subject: "Thanks for the Lead!",
